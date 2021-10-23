@@ -1,0 +1,94 @@
+﻿
+-------------------------------------------------------------------------------------------------
+
+CREATE TABLE [gia].[Template](
+	[TemplateId] [char](7) NOT NULL,
+	[TemplateTitle] [varchar](200) NULL,
+	[TemplateSubTitle] [varchar](200) NULL,
+	[TemplateDesc] [varchar](1000) NULL,
+	[TemplateImage] [varchar](20) NULL,
+	[Active] [bit] NOT NULL)
+
+-------------------------------------------------------------------------------------------------
+
+CREATE TABLE [gia].[Section](
+	[SectionId] [char](10) NOT NULL,
+	[TemplateId] [char](7) NOT NULL,
+	[SortOrder] [int] NOT NULL,
+	[SectionTitle] [varchar](200) NULL,
+	[SectionSubTitle] [varchar](200) NULL,
+	[SectionPreDesc] [varchar](1000) NULL,
+	[SectionPostDesc] [varchar](1000) NULL,
+	[SectionImage] [varchar](20) NULL,
+	[Active] [bit] NOT NULL)
+
+-------------------------------------------------------------------------------------------------
+
+CREATE TABLE [gia].[Question](
+	[QuestionId] [char](14) NOT NULL,
+	[SectionId] [char](10) NOT NULL,
+	[SortOrder] [int] NOT NULL,
+	[QuestionTypeId] [char](2) NOT NULL,
+	[QuestionNo] [varchar](10) NULL,
+	[QuestionText] [varchar](512) NULL,
+	[PreDesc] [varchar](1000) NULL,
+	[PostDesc] [varchar](1000) NULL,
+	[ErrMsgPrimary] [varchar](200) NULL,
+	[ErrMsgSecondary] [varchar](200) NULL,
+	[Visible] [bit] NOT NULL,
+	[Active] [bit] NOT NULL)
+
+-------------------------------------------------------------------------------------------------
+
+CREATE TABLE [gia].[QuestionType](
+	[Id] [char](2) NOT NULL,
+	[Description] [varchar](20) NOT NULL)
+
+-------------------------------------------------------------------------------------------------
+
+CREATE PROCEDURE [gia].[spSELECTTemplate] @TemplateId char(7)
+AS
+BEGIN
+	SELECT TOP (1) [TemplateId],[TemplateTitle],[TemplateSubTitle],[TemplateDesc],[TemplateImage] 
+	FROM [gia].[Template] 
+	WHERE [TemplateId] = @TemplateId AND [Active] = 1;
+END
+
+-------------------------------------------------------------------------------------------------
+
+CREATE PROCEDURE [gia].[spSELECTSections] @TemplateId char(7)
+AS
+BEGIN
+	SELECT TOP (10) [SectionId],[SectionTitle],[SectionSubTitle],[SectionPreDesc],[SectionPostDesc],[SectionImage] 
+	FROM [gia].[Section] 
+	WHERE [TemplateId] = @TemplateId AND [Active] = 1 
+	ORDER BY [SortOrder];
+END
+
+
+CREATE PROCEDURE [gia].[spSELECTQuestions] @SectionId char(10)
+AS
+BEGIN
+
+SELECT TOP (30) [QuestionId],[QuestionTypeId],[QuestionNo],[QuestionText],[PreDesc],[PostDesc],[ErrMsgPrimary],[ErrMsgSecondary],[Visible] 
+		FROM [gia].[Question] 
+		WHERE [SectionId] = @SectionId AND [Active] = 1 
+		ORDER BY [SortOrder];
+
+END
+
+-------------------------------------------------------------------------------------------------
+
+CREATE PROCEDURE [gia].[spSELECTOptions] @QuestionId char(14)
+AS
+BEGIN
+
+	SELECT TOP (30) [OptionListId],[Text] 
+	FROM [gia].[OptionList] 
+	WHERE [QuestionId] = @QuestionId AND [Active] = 1 
+	ORDER BY [SortOrder];
+
+END
+
+-------------------------------------------------------------------------------------------------
+
